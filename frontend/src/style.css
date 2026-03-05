@@ -1,0 +1,276 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/forms";
+
+:root {
+  --bg: #0a0a1a;
+  --gold: #f5d577;
+  --gold-dark: #b8922a;
+  --silver: #c0c0c0;
+  --silver-dark: #7a7a7a;
+  --bronze: #cd8c52;
+  --bronze-dark: #8b5a2b;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg);
+  color: #ffffff;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+/* ============================================================
+   FIFA CARD
+   ============================================================ */
+.fifa-card {
+  position: relative;
+  width: 250px;
+  height: 350px;
+  border-radius: 12px;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+  user-select: none;
+}
+
+.fifa-card.gold {
+  background: linear-gradient(135deg, #b8922a 0%, #f5d577 40%, #ffe9a0 55%, #f5d577 70%, #b8922a 100%);
+  box-shadow: 0 4px 20px rgba(245, 213, 119, 0.3);
+}
+.fifa-card.silver {
+  background: linear-gradient(135deg, #5a5a5a 0%, #c0c0c0 40%, #e8e8e8 55%, #c0c0c0 70%, #5a5a5a 100%);
+  box-shadow: 0 4px 20px rgba(192, 192, 192, 0.3);
+}
+.fifa-card.bronze {
+  background: linear-gradient(135deg, #6b3f1e 0%, #cd8c52 40%, #e8a96a 55%, #cd8c52 70%, #6b3f1e 100%);
+  box-shadow: 0 4px 20px rgba(205, 140, 82, 0.3);
+}
+
+.fifa-card:hover.gold {
+  box-shadow: 0 0 30px rgba(245, 213, 119, 0.7), 0 0 60px rgba(245, 213, 119, 0.3);
+}
+.fifa-card:hover.silver {
+  box-shadow: 0 0 30px rgba(192, 192, 192, 0.7), 0 0 60px rgba(192, 192, 192, 0.3);
+}
+.fifa-card:hover.bronze {
+  box-shadow: 0 0 30px rgba(205, 140, 82, 0.7), 0 0 60px rgba(205, 140, 82, 0.3);
+}
+
+.fifa-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 14px 16px 12px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.fifa-card-inner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+  border-radius: 12px;
+}
+
+.fifa-card-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.fifa-card-ovr {
+  font-size: 2.4rem;
+  font-weight: 900;
+  line-height: 1;
+  color: rgba(0,0,0,0.75);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.3);
+  letter-spacing: -1px;
+}
+
+.fifa-card-pos {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: rgba(0,0,0,0.65);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 6px;
+}
+
+.fifa-card-photo-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 4px 0 2px;
+}
+
+.fifa-card-photo {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid rgba(0,0,0,0.25);
+  background: rgba(0,0,0,0.15);
+}
+
+.fifa-card-photo-placeholder {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.2);
+  border: 3px solid rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  color: rgba(0,0,0,0.4);
+}
+
+.fifa-card-name {
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: rgba(0,0,0,0.8);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fifa-card-club {
+  text-align: center;
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: rgba(0,0,0,0.5);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.fifa-card-divider {
+  height: 1px;
+  background: rgba(0,0,0,0.2);
+  margin: 0 -4px 8px;
+}
+
+.fifa-card-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px 12px;
+}
+
+.fifa-card-stat {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.fifa-card-stat-val {
+  font-size: 0.9rem;
+  font-weight: 900;
+  color: rgba(0,0,0,0.8);
+  min-width: 22px;
+}
+
+.fifa-card-stat-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: rgba(0,0,0,0.55);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+@media (max-width: 640px) {
+  .fifa-card {
+    width: 160px;
+    height: 224px;
+  }
+  .fifa-card-inner { padding: 8px 10px 8px; }
+  .fifa-card-ovr { font-size: 1.5rem; }
+  .fifa-card-pos { font-size: 0.55rem; margin-top: 4px; }
+  .fifa-card-photo { width: 76px; height: 76px; }
+  .fifa-card-photo-placeholder { width: 76px; height: 76px; font-size: 1.8rem; }
+  .fifa-card-name { font-size: 0.6rem; letter-spacing: 1px; }
+  .fifa-card-club { font-size: 0.45rem; margin-bottom: 4px; }
+  .fifa-card-stat-val { font-size: 0.6rem; min-width: 16px; }
+  .fifa-card-stat-label { font-size: 0.45rem; }
+  .fifa-card-stats { gap: 2px 8px; }
+  .fifa-card-divider { margin-bottom: 4px; }
+}
+
+/* ============================================================
+   LOGIN BACKGROUND ANIMATION
+   ============================================================ */
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.login-bg {
+  background: linear-gradient(-45deg, #0a0a1a, #0d1a3a, #1a0a2e, #0a1a0a, #1a1a0a);
+  background-size: 400% 400%;
+  animation: gradientShift 12s ease infinite;
+}
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0a0a1a; }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #555; }
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 1rem;
+}
+
+.modal-box {
+  background: #12122a;
+  border: 1px solid rgba(245, 213, 119, 0.2);
+  border-radius: 16px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* ============================================================
+   TRANSITIONS
+   ============================================================ */
+.fade-enter-active, .fade-leave-active { transition: opacity 0.2s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
+
+.slide-up-enter-active { transition: all 0.3s ease; }
+.slide-up-leave-active { transition: all 0.2s ease; }
+.slide-up-enter-from { opacity: 0; transform: translateY(20px); }
+.slide-up-leave-to { opacity: 0; transform: translateY(-10px); }
