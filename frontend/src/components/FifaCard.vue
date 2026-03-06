@@ -80,8 +80,6 @@ const props = defineProps({
   player: { type: Object, required: true },
 })
 
-console.log('PROPS: ', props.player)
-
 const photoSrc = computed(() => {
   const p = props.player.photo
   if (!p) return ''
