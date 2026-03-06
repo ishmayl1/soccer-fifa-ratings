@@ -12,7 +12,7 @@ const s3 = new S3Client({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   },
-  forcePathStyle: true,
+  forcePathStyle: false,
 });
 
 const fileFilter = (req, file, cb) => {
@@ -28,7 +28,6 @@ const upload = multer({
   storage: multerS3({
     s3,
     bucket: process.env.AWS_S3_BUCKET_NAME,
-    acl: 'public-read',
     key: (req, file, cb) => {
       const ext = path.extname(file.originalname);
       cb(null, `uploads/${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`);
@@ -38,7 +37,8 @@ const upload = multer({
 
 router.post('/', auth, upload.single('photo'), (req, res) => {
   if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
-  res.json({ filename: req.file.location });
+  // Store just the S3 key — served via /uploads/:key proxy
+  res.json({ filename: req.file.key });
 });
 
 module.exports = router;

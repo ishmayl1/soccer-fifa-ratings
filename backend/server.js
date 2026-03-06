@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const connectDB = require('./config/db');
+const { S3Client, GetObjectCommand } = require('@aws-sdk/client-s3');
 
 const app = express();
 
@@ -14,7 +15,36 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 app.use(express.json());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Proxy /uploads/* from S3 if bucket is configured, otherwise serve local files
+if (process.env.AWS_S3_BUCKET_NAME) {
+  const s3 = new S3Client({
+    endpoint: process.env.AWS_ENDPOINT_URL,
+    region: process.env.AWS_DEFAULT_REGION || 'auto',
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    },
+    forcePathStyle: false,
+  });
+
+  app.get('/uploads/*', async (req, res) => {
+    try {
+      const key = req.params[0];
+      const command = new GetObjectCommand({
+        Bucket: process.env.AWS_S3_BUCKET_NAME,
+        Key: `uploads/${key}`,
+      });
+      const { Body, ContentType } = await s3.send(command);
+      if (ContentType) res.setHeader('Content-Type', ContentType);
+      Body.pipe(res);
+    } catch (err) {
+      res.status(404).json({ message: 'Image not found' });
+    }
+  });
+} else {
+  app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+}
 
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/players', require('./routes/players'));
