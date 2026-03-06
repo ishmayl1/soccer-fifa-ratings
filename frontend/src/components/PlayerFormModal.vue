@@ -27,13 +27,6 @@
           </NFormItem>
         </div>
 
-        <NFormItem :show-feedback="false">
-          <template #label>
-            Overall: <span class="text-gold font-bold">{{ form.overall }}</span>
-          </template>
-          <NSlider v-model:value="form.overall" :min="1" :max="99" style="width:100%" />
-        </NFormItem>
-
         <div class="two-col d-grid gap-3">
           <NFormItem v-for="stat in statKeys" :key="stat" :show-feedback="false">
             <template #label>
@@ -109,6 +102,17 @@ const users = ref([])
 const userOptions = computed(() =>
   users.value.map(u => ({ label: `${u.username} (${u.email})`, value: u._id }))
 )
+const overallValue = computed(() => {
+  // find the average value of all stats
+  let avg = null;
+  const arr = Object.values(form.value.stats)
+  if (arr.length > 0) {
+    avg = arr.reduce((a, b) => a + b, 0) / arr.length
+  }
+
+  return Math.floor(avg);
+  
+})
 
 onMounted(async () => {
   try {
@@ -144,7 +148,7 @@ function onFile(e) {
 }
 
 const FifaCardPreviewPlayer = computed(() => {
-  const p = { ...form.value, stats: { ...form.value.stats } }
+  const p = { ...form.value, overall: overallValue.value, stats: { ...form.value.stats} }
   if (photoFile.value) {
     p.photo = photoPreviewUrl.value
   } else if (props.editingPlayer?.photo) {
@@ -169,7 +173,7 @@ async function submit() {
       position: form.value.position,
       nationality: form.value.nationality,
       club: form.value.club,
-      overall: form.value.overall,
+      overall: overallValue.value,
       stats: { ...form.value.stats },
       photo,
       owner: form.value.owner || null,
