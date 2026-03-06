@@ -19,6 +19,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/players', require('./routes/players'));
 app.use('/api/upload', require('./routes/upload'));
+app.use('/api/votes', require('./routes/votes'));
 
 // Serve built Vue frontend in production
 if (process.env.NODE_ENV === 'production') {

@@ -39,6 +39,12 @@
     @close="showProfileModal = false"
     @saved="onProfileSaved"
   />
+
+  <BallonDorVoteModal
+    :show="showVoteModal"
+    :players="players"
+    @close="showVoteModal = false"
+  />
 </template>
 
 <script setup>
@@ -48,23 +54,38 @@ import { useRouter } from 'vue-router'
 import SearchBar from '../components/SearchBar.vue'
 import PlayerCarousel from '../components/PlayerCarousel.vue'
 import ProfileEditModal from '../components/ProfileEditModal.vue'
+import BallonDorVoteModal from '../components/BallonDorVoteModal.vue'
 import { usePlayerStore } from '../stores/players'
 import { useAuthStore } from '../stores/auth'
+import { useVoteStore } from '../stores/votes'
 
 const playerStore = usePlayerStore()
 const auth = useAuthStore()
+const voteStore = useVoteStore()
 const router = useRouter()
 
 const currentSearch = ref('')
 const showProfileModal = ref(false)
 const selectedPlayer = ref(null)
+const showVoteModal = ref(false)
 
 const players = computed(() => playerStore.players)
 
 onMounted(async () => {
   await playerStore.fetchPlayers()
   const hasCard = playerStore.players.some(p => p.owner?._id === auth.user?.id)
-  if (!hasCard) router.push('/onboarding')
+  if (!hasCard) {
+    router.push('/onboarding')
+    return
+  }
+
+  // Show vote modal after 3s if user hasn't voted yet
+  try {
+    await voteStore.checkVote()
+    if (!voteStore.voted) {
+      setTimeout(() => { showVoteModal.value = true }, 3000)
+    }
+  } catch {}
 })
 
 function onSearch(q) {
