@@ -84,9 +84,14 @@ router.put('/:id', auth, adminOnly, async (req, res) => {
   }
 });
 
-// DELETE /api/players/:id — admin only
+// DELETE /api/players/:id — superadmin only
 router.delete('/:id', auth, adminOnly, async (req, res) => {
   try {
+    const requestingUser = await User.findById(req.user.id).select('email');
+    const superadminEmail = process.env.SUPERADMIN_EMAIL || 'ishmayl1@gmail.com';
+    if (!requestingUser || requestingUser.email !== superadminEmail) {
+      return res.status(403).json({ message: 'Only the superadmin can delete players' });
+    }
     const player = await Player.findByIdAndDelete(req.params.id);
     if (!player) return res.status(404).json({ message: 'Player not found' });
     res.json({ message: 'Player deleted' });

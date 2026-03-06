@@ -44,6 +44,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { NSpin } from 'naive-ui'
+import { useRouter } from 'vue-router'
 import SearchBar from '../components/SearchBar.vue'
 import PlayerCarousel from '../components/PlayerCarousel.vue'
 import ProfileEditModal from '../components/ProfileEditModal.vue'
@@ -52,6 +53,7 @@ import { useAuthStore } from '../stores/auth'
 
 const playerStore = usePlayerStore()
 const auth = useAuthStore()
+const router = useRouter()
 
 const currentSearch = ref('')
 const showProfileModal = ref(false)
@@ -59,7 +61,11 @@ const selectedPlayer = ref(null)
 
 const players = computed(() => playerStore.players)
 
-onMounted(() => playerStore.fetchPlayers())
+onMounted(async () => {
+  await playerStore.fetchPlayers()
+  const hasCard = playerStore.players.some(p => p.owner?._id === auth.user?.id)
+  if (!hasCard) router.push('/onboarding')
+})
 
 function onSearch(q) {
   currentSearch.value = q
