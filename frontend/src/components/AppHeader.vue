@@ -10,6 +10,9 @@
         </span>
       </router-link>
 
+      <!-- Version -->
+      <span class="hidden sm:block text-[10px] font-mono text-white/20 select-none">v{{ version }}</span>
+
       <!-- Nav -->
       <nav class="flex items-center gap-3">
         <router-link
@@ -48,6 +51,8 @@ import { useRouter } from 'vue-router'
 
 const auth = useAuthStore()
 const router = useRouter()
+
+const version = __APP_VERSION__
 
 function logout() {
   auth.logout()

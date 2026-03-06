@@ -26,7 +26,7 @@
       <div
         v-if="!playerStore.loading && playerStore.players.length > 0"
         class="grid gap-4 md:gap-6 justify-items-center"
-        style="grid-template-columns: repeat(auto-fill, minmax(160px, max-content));"
+        style="grid-template-columns: repeat(auto-fill, minmax(160px, 250px));"
       >
         <div
           v-for="player in playerStore.players"
