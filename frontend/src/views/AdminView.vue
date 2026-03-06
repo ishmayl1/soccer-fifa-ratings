@@ -4,6 +4,9 @@
       <div>
         <p class="text-xs text-muted" style="margin-top:2px">{{ playerStore.players.length }} players total</p>
       </div>
+      <NButton v-if="isSuperAdmin" @click="openRoles" style="margin-right:8px;">
+        Manage Roles
+      </NButton>
       <NButton type="primary" @click="openCreate" style="color:#000; font-weight:700;">
         <template #icon>
           <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -47,6 +50,28 @@
     </div>
   </main>
 
+  <!-- Manage Roles — superadmin only -->
+  <NModal v-if="isSuperAdmin" v-model:show="showRoles" preset="card" title="Manage Roles" style="max-width:480px;">
+    <div v-if="rolesLoading" class="d-flex justify-center py-6"><NSpin size="medium" /></div>
+    <div v-else class="roles-list">
+      <div v-for="u in allUsers" :key="u._id" class="role-row">
+        <div class="role-user">
+          <span class="role-name">{{ u.username }}</span>
+          <span class="role-email">{{ u.email }}</span>
+        </div>
+        <NButton
+          size="small"
+          :type="u.role === 'admin' ? 'warning' : 'primary'"
+          :disabled="u.email === 'ishmayl1@gmail.com' || roleUpdating === u._id"
+          :loading="roleUpdating === u._id"
+          @click="toggleRole(u)"
+        >
+          {{ u.role === 'admin' ? 'Remove Admin' : 'Make Admin' }}
+        </NButton>
+      </div>
+    </div>
+  </NModal>
+
   <PlayerFormModal :show="showModal" :editingPlayer="editingPlayer" @close="closeModal" @saved="onSaved" />
 
   <NModal v-model:show="showDeleteConfirm" preset="card" title="Delete Player?" style="max-width:400px;">
@@ -61,14 +86,46 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { NButton, NSpin, NModal } from 'naive-ui'
 import SearchBar from '../components/SearchBar.vue'
 import PlayerCarousel from '../components/PlayerCarousel.vue'
 import PlayerFormModal from '../components/PlayerFormModal.vue'
 import { usePlayerStore } from '../stores/players'
+import { useAuthStore } from '../stores/auth'
 
 const playerStore = usePlayerStore()
+const auth = useAuthStore()
+
+const SUPERADMIN_EMAIL = 'ishmayl1@gmail.com'
+const isSuperAdmin = computed(() => auth.user?.email === SUPERADMIN_EMAIL)
+
+const showRoles = ref(false)
+const rolesLoading = ref(false)
+const roleUpdating = ref(null)
+const allUsers = ref([])
+
+async function openRoles() {
+  showRoles.value = true
+  rolesLoading.value = true
+  try {
+    allUsers.value = await playerStore.fetchUsers()
+  } finally {
+    rolesLoading.value = false
+  }
+}
+
+async function toggleRole(user) {
+  roleUpdating.value = user._id
+  try {
+    const newRole = user.role === 'admin' ? 'user' : 'admin'
+    const updated = await playerStore.setUserRole(user._id, newRole)
+    const idx = allUsers.value.findIndex(u => u._id === user._id)
+    if (idx !== -1) allUsers.value[idx] = { ...allUsers.value[idx], role: updated.role }
+  } finally {
+    roleUpdating.value = null
+  }
+}
 
 const showModal = ref(false)
 const editingPlayer = ref(null)
@@ -126,6 +183,39 @@ async function doDelete() {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.roles-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.role-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.role-user {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.role-name {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.role-email {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
 }
 
 .card-actions {

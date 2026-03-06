@@ -135,6 +135,11 @@ watch(count, (n) => {
   transform: translate(-50%, -50%);
 }
 
+@media (min-width: 601px) {
+  .carousel-wrap { height: 680px; }
+  .carousel-scene { transform: translate(-50%, -50%) scale(1.5); }
+}
+
 .carousel-offset {
   position: absolute;
   left: 50%;

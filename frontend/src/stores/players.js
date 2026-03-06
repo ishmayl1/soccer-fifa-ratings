@@ -67,5 +67,10 @@ export const usePlayerStore = defineStore('players', {
       const { data } = await api.get('/players/users/list')
       return data
     },
+
+    async setUserRole(userId, role) {
+      const { data } = await api.patch(`/auth/users/${userId}/role`, { role })
+      return data
+    },
   },
 })

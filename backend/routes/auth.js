@@ -53,6 +53,33 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// PATCH /api/auth/users/:id/role — superadmin only: promote/demote users
+router.patch('/users/:id/role', auth, async (req, res) => {
+  try {
+    const superadminEmail = process.env.SUPERADMIN_EMAIL || 'ishmayl1@gmail.com';
+    const requestingUser = await User.findById(req.user.id).select('email');
+    if (!requestingUser || requestingUser.email !== superadminEmail) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+
+    const { role } = req.body;
+    if (!['admin', 'user'].includes(role)) {
+      return res.status(400).json({ message: 'Invalid role' });
+    }
+
+    const target = await User.findByIdAndUpdate(
+      req.params.id,
+      { role },
+      { new: true }
+    ).select('-password');
+    if (!target) return res.status(404).json({ message: 'User not found' });
+
+    res.json({ id: target._id, username: target.username, email: target.email, role: target.role });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 router.get('/me', auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
