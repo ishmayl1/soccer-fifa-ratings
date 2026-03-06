@@ -34,11 +34,6 @@
             <NInput v-model:value="form.password" type="password" placeholder="••••••••" size="large" show-password-on="click" />
           </NFormItem>
 
-          <Transition name="slide-up">
-            <NFormItem v-if="mode === 'register'" label="Admin Secret" :show-feedback="false">
-              <NInput v-model:value="form.adminSecret" type="password" placeholder="Leave blank for regular account" size="large" show-password-on="click" />
-            </NFormItem>
-          </Transition>
 
           <NAlert v-if="error" type="error" :bordered="false" class="mt-1">
             {{ error }}
@@ -72,7 +67,7 @@ const router = useRouter()
 const mode = ref('login')
 const loading = ref(false)
 const error = ref('')
-const form = ref({ username: '', email: '', password: '', adminSecret: '' })
+const form = ref({ username: '', email: '', password: '' })
 
 watch(mode, () => { error.value = '' })
 
@@ -84,7 +79,7 @@ async function submit() {
       await auth.login(form.value.email, form.value.password)
       router.push('/')
     } else {
-      await auth.register(form.value.username, form.value.email, form.value.password, form.value.adminSecret || null)
+      await auth.register(form.value.username, form.value.email, form.value.password)
       router.push(auth.isAdmin ? '/' : '/onboarding')
     }
   } catch (err) {
