@@ -107,7 +107,7 @@ function onProfileSaved() {}
 
 <style scoped>
 .page-main {
-  min-height: 100vh;
+  height: 100%;
   padding: 2rem 1.5rem;
   display: flex;
   flex-direction: column;

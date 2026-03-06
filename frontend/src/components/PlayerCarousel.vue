@@ -208,7 +208,9 @@ watch(count, (n) => {
 .carousel-nav.next { right: 16px; }
 
 @media (max-width: 600px) {
+  .carousel-wrap { height: auto; flex: 1; min-height: 420px; }
   .carousel-nav { display: none; }
-  .carousel-offset { left: 44%; top: 40%;}
+  .carousel-scene { top: 50%; }
+  .carousel-slot { width: 280px; height: 392px; margin-left: -140px; margin-top: -196px; }
 }
 </style>
