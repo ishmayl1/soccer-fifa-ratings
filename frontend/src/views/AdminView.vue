@@ -1,8 +1,5 @@
 <template>
-  <div class="min-h-screen">
-    <AppHeader />
-
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
       <!-- Header row -->
       <div class="flex items-center justify-between mb-8">
         <div>
@@ -89,48 +86,46 @@
           Add First Player
         </button>
       </div>
-    </main>
+  </main>
 
-    <!-- Player form modal -->
-    <PlayerFormModal
-      :show="showModal"
-      :editingPlayer="editingPlayer"
-      @close="closeModal"
-      @saved="onSaved"
-    />
+  <!-- Player form modal -->
+  <PlayerFormModal
+    :show="showModal"
+    :editingPlayer="editingPlayer"
+    @close="closeModal"
+    @saved="onSaved"
+  />
 
-    <!-- Delete confirm dialog -->
-    <Teleport to="body">
-      <Transition name="fade">
-        <div v-if="deleteTarget" class="modal-overlay" @click.self="deleteTarget = null">
-          <div class="modal-box" style="max-width: 400px;">
-            <h3 class="text-lg font-bold text-white mb-2">Delete Player?</h3>
-            <p class="text-white/60 text-sm mb-6">
-              Are you sure you want to delete <span class="text-white font-semibold">{{ deleteTarget.name }}</span>? This cannot be undone.
-            </p>
-            <div class="flex gap-3">
-              <button
-                @click="deleteTarget = null"
-                class="flex-1 py-2 rounded-lg border border-white/10 text-white/60 hover:text-white hover:border-white/30 transition-all"
-              >Cancel</button>
-              <button
-                @click="doDelete"
-                :disabled="deleting"
-                class="flex-1 py-2 rounded-lg bg-red-500 text-white font-bold hover:bg-red-400 transition-all disabled:opacity-50"
-              >
-                {{ deleting ? 'Deleting...' : 'Delete' }}
-              </button>
-            </div>
+  <!-- Delete confirm dialog -->
+  <Teleport to="body">
+    <Transition name="fade">
+      <div v-if="deleteTarget" class="modal-overlay" @click.self="deleteTarget = null">
+        <div class="modal-box" style="max-width: 400px;">
+          <h3 class="text-lg font-bold text-white mb-2">Delete Player?</h3>
+          <p class="text-white/60 text-sm mb-6">
+            Are you sure you want to delete <span class="text-white font-semibold">{{ deleteTarget.name }}</span>? This cannot be undone.
+          </p>
+          <div class="flex gap-3">
+            <button
+              @click="deleteTarget = null"
+              class="flex-1 py-2 rounded-lg border border-white/10 text-white/60 hover:text-white hover:border-white/30 transition-all"
+            >Cancel</button>
+            <button
+              @click="doDelete"
+              :disabled="deleting"
+              class="flex-1 py-2 rounded-lg bg-red-500 text-white font-bold hover:bg-red-400 transition-all disabled:opacity-50"
+            >
+              {{ deleting ? 'Deleting...' : 'Delete' }}
+            </button>
           </div>
         </div>
-      </Transition>
-    </Teleport>
-  </div>
+      </div>
+    </Transition>
+  </Teleport>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import AppHeader from '../components/AppHeader.vue'
 import SearchBar from '../components/SearchBar.vue'
 import FifaCard from '../components/FifaCard.vue'
 import PlayerFormModal from '../components/PlayerFormModal.vue'

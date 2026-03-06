@@ -1,8 +1,5 @@
 <template>
-  <div class="min-h-screen">
-    <AppHeader />
-
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
       <!-- Search -->
       <div class="mb-8">
         <SearchBar @search="onSearch" />
@@ -55,21 +52,19 @@
           {{ currentSearch ? 'No players found' : 'No players yet. Ask an admin to add some!' }}
         </p>
       </div>
-    </main>
+  </main>
 
-    <!-- Profile edit modal -->
-    <ProfileEditModal
-      :show="showProfileModal"
-      :player="selectedPlayer"
-      @close="showProfileModal = false"
-      @saved="onProfileSaved"
-    />
-  </div>
+  <!-- Profile edit modal -->
+  <ProfileEditModal
+    :show="showProfileModal"
+    :player="selectedPlayer"
+    @close="showProfileModal = false"
+    @saved="onProfileSaved"
+  />
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import AppHeader from '../components/AppHeader.vue'
 import SearchBar from '../components/SearchBar.vue'
 import FifaCard from '../components/FifaCard.vue'
 import ProfileEditModal from '../components/ProfileEditModal.vue'

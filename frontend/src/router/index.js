@@ -10,15 +10,21 @@ const routes = [
   },
   {
     path: '/',
-    name: 'Home',
-    component: () => import('../views/HomeView.vue'),
+    component: () => import('../views/MainLayout.vue'),
     meta: { requiresAuth: true },
-  },
-  {
-    path: '/admin',
-    name: 'Admin',
-    component: () => import('../views/AdminView.vue'),
-    meta: { requiresAuth: true, requiresAdmin: true },
+    children: [
+      {
+        path: '',
+        name: 'Home',
+        component: () => import('../views/HomeView.vue'),
+      },
+      {
+        path: 'admin',
+        name: 'Admin',
+        component: () => import('../views/AdminView.vue'),
+        meta: { requiresAdmin: true },
+      },
+    ],
   },
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ]
