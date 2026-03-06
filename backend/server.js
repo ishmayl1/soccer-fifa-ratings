@@ -3,8 +3,6 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const connectDB = require('./config/db');
-const { S3Client, GetObjectCommand } = require('@aws-sdk/client-s3');
-
 const app = express();
 
 connectDB();
@@ -18,6 +16,7 @@ app.use(express.json());
 
 // Proxy /uploads/* from S3 if bucket is configured, otherwise serve local files
 if (process.env.AWS_S3_BUCKET_NAME) {
+  const { S3Client, GetObjectCommand } = require('@aws-sdk/client-s3');
   const s3 = new S3Client({
     endpoint: process.env.AWS_ENDPOINT_URL,
     region: process.env.AWS_DEFAULT_REGION || 'auto',
@@ -30,10 +29,11 @@ if (process.env.AWS_S3_BUCKET_NAME) {
 
   app.get('/uploads/*', async (req, res) => {
     try {
-      const key = req.params[0];
+      // Strip any accidental leading "uploads/" from stored keys
+      const key = req.params[0].replace(/^uploads\//, '');
       const command = new GetObjectCommand({
         Bucket: process.env.AWS_S3_BUCKET_NAME,
-        Key: `uploads/${key}`,
+        Key: key,
       });
       const { Body, ContentType } = await s3.send(command);
       if (ContentType) res.setHeader('Content-Type', ContentType);
