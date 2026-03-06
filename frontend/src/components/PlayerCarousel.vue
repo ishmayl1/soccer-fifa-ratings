@@ -40,12 +40,14 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import FifaCard from './FifaCard.vue'
 
 const props = defineProps({
   players: { type: Array, required: true },
+  activeOwnerId: { type: String, default: null },
 })
+console.log('PROPS ID: ', props.activeOwnerId)
 
 const currentIndex = ref(0)
 const ringAngle = ref(0)
@@ -95,6 +97,16 @@ function onTouchEnd(e) {
   const dx = e.changedTouches[0].clientX - touchStartX
   if (Math.abs(dx) > 50) dx < 0 ? next() : prev()
 }
+
+onMounted(() => {
+  if (props.activeOwnerId && props.players.length > 0) {
+    const idx = props.players.findIndex(p => p.owner?._id === props.activeOwnerId)
+    if (idx !== -1) {
+      currentIndex.value = idx
+      ringAngle.value = -idx * anglePerCard.value
+    }
+  }
+})
 
 watch(count, (n) => {
   if (currentIndex.value >= n) {

@@ -8,7 +8,7 @@
       </p>
     </div>
 
-    <PlayerCarousel v-if="!playerStore.loading && players.length > 0" :players="players">
+    <PlayerCarousel v-if="!playerStore.loading && players.length > 0 && auth.user?.id" :players="players" :active-owner-id="auth.user?.id">
       <template #default="{ player, isActive }">
         <button
           v-if="isOwner(player) && isActive"
