@@ -154,7 +154,7 @@ router.patch('/:id/profile', auth, async (req, res) => {
 // GET /api/players/users/list — admin only: get all users for owner dropdown
 router.get('/users/list', auth, adminOnly, async (req, res) => {
   try {
-    const users = await User.find().select('_id username email');
+    const users = await User.find().select('_id username email role');
     res.json(users);
   } catch (err) {
     res.status(500).json({ message: err.message });
