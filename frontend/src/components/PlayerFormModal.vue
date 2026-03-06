@@ -6,7 +6,7 @@
     style="max-width: 800px; width: 95vw;"
     @update:show="val => !val && $emit('close')"
   >
-    <div class="modal-layout d-flex gap-8 align-start">
+    <div class="modal-layout d-flex gap-8 align-start" :class="{'align-center': isMobile || isTablet}">
       <!-- Form -->
       <form @submit.prevent="submit" class="form-col flex-1 d-flex flex-column gap-4">
         <div class="two-col d-grid gap-3">
@@ -75,6 +75,7 @@ import { ref, watch, computed, onMounted } from 'vue'
 import { NModal, NFormItem, NInput, NSelect, NSlider, NButton, NAlert } from 'naive-ui'
 import FifaCard from './FifaCard.vue'
 import { usePlayerStore } from '../stores/players'
+import { useBreakpoints } from '../composables/useBreakpoints'
 
 const props = defineProps({
   show: Boolean,
@@ -83,6 +84,7 @@ const props = defineProps({
 const emit = defineEmits(['close', 'saved'])
 
 const playerStore = usePlayerStore()
+const { isMobile, isTablet } = useBreakpoints()
 
 const positions = ['GK', 'CB', 'LB', 'RB', 'CDM', 'CM', 'CAM', 'LM', 'RM', 'LW', 'RW', 'CF', 'ST']
 const positionOptions = positions.map(p => ({ label: p, value: p }))
