@@ -47,7 +47,6 @@ const props = defineProps({
   players: { type: Array, required: true },
   activeOwnerId: { type: String, default: null },
 })
-console.log('PROPS ID: ', props.activeOwnerId)
 
 const currentIndex = ref(0)
 const ringAngle = ref(0)
@@ -210,6 +209,6 @@ watch(count, (n) => {
 
 @media (max-width: 600px) {
   .carousel-nav { display: none; }
-  .carousel-offset { left: 44%; }
+  .carousel-offset { left: 44%; top: 40%;}
 }
 </style>

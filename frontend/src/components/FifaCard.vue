@@ -228,7 +228,7 @@ function onMouseLeave() {
 }
 
 .fifa-card-photo-wrap {
-  flex: 1;
+  flex: 0 1 auto;
   display: flex;
   align-items: center;
   justify-content: center;
