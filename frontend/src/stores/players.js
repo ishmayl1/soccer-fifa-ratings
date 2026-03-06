@@ -68,6 +68,12 @@ export const usePlayerStore = defineStore('players', {
       return data
     },
 
+    async setBallonDor(id) {
+      const { data } = await api.patch(`/players/${id}/ballon-dor`)
+      this.players = this.players.map(p => ({ ...p, ballonDor: p._id === id ? data.ballonDor : false }))
+      return data
+    },
+
     async setUserRole(userId, role) {
       const { data } = await api.patch(`/auth/users/${userId}/role`, { role })
       return data

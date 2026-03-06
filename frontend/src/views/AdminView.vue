@@ -29,6 +29,19 @@
               <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
             </svg>
           </button>
+          <!-- Award Ballon d'Or -->
+          <button v-if="!player.ballonDor" @click.stop="awardBallonDor(player)" class="action-btn ballon-dor-btn" title="Award Ballon d'Or">
+            <svg width="11" height="11" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M18 2H6v7a6 6 0 0 0 12 0V2zM4.5 4H6v5a7.96 7.96 0 0 1-.72-1.36A3.5 3.5 0 0 1 4.5 4zM19.5 4a3.5 3.5 0 0 1-.78 3.64A7.96 7.96 0 0 1 18 9V4h1.5zM4 22h16v-2H4v2zm6-3.34V17h4v1.66a8.2 8.2 0 0 1-2 .34 8.2 8.2 0 0 1-2-.34z"/>
+            </svg>
+          </button>
+          <!-- Remove Ballon d'Or -->
+          <button v-else @click.stop="awardBallonDor(player)" class="action-btn ballon-dor-remove-btn" title="Remove Ballon d'Or">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18 2H6v7a6 6 0 0 0 12 0V2zM4.5 4H6v5a7.96 7.96 0 0 1-.72-1.36A3.5 3.5 0 0 1 4.5 4zM19.5 4a3.5 3.5 0 0 1-.78 3.64A7.96 7.96 0 0 1 18 9V4h1.5zM4 22h16v-2H4v2zm6-3.34V17h4v1.66a8.2 8.2 0 0 1-2 .34 8.2 8.2 0 0 1-2-.34z"/>
+              <line x1="3" y1="3" x2="21" y2="21" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+          </button>
           <button v-if="isSuperAdmin" @click.stop="confirmDelete(player)" class="action-btn delete-btn" title="Delete">
             <svg width="11" height="11" fill="currentColor" viewBox="0 0 24 24">
               <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
@@ -156,6 +169,10 @@ function closeModal() {
 
 function onSaved() {}
 
+async function awardBallonDor(player) {
+  await playerStore.setBallonDor(player._id)
+}
+
 function confirmDelete(player) {
   deleteTarget.value = player
   showDeleteConfirm.value = true
@@ -250,6 +267,9 @@ async function doDelete() {
 
 .action-btn:hover { transform: scale(1.1); background: rgba(0, 0, 0, 0.8); }
 .delete-btn { color: #f56c6c; }
+.ballon-dor-btn { color: rgba(255, 255, 255, 0.6); }
+.ballon-dor-remove-btn { color: #fff; background: rgba(200, 40, 40, 0.75); }
+.ballon-dor-remove-btn:hover { background: rgba(200, 40, 40, 0.95) !important; transform: scale(1.1); }
 
 .owner-badge {
   position: absolute;

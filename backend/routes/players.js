@@ -100,6 +100,29 @@ router.delete('/:id', auth, adminOnly, async (req, res) => {
   }
 });
 
+// PATCH /api/players/:id/ballon-dor — admin only: toggle Ballon d'Or (only one player can hold it)
+router.patch('/:id/ballon-dor', auth, adminOnly, async (req, res) => {
+  try {
+    const player = await Player.findById(req.params.id);
+    if (!player) return res.status(404).json({ message: 'Player not found' });
+
+    if (player.ballonDor) {
+      // already the holder — remove it
+      player.ballonDor = false;
+    } else {
+      // clear from current holder, then assign
+      await Player.updateMany({ ballonDor: true }, { ballonDor: false });
+      player.ballonDor = true;
+    }
+
+    await player.save();
+    await player.populate('owner', 'username email');
+    res.json(player);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // PATCH /api/players/:id/profile — owner or admin: name, photo, nationality, club, position
 router.patch('/:id/profile', auth, async (req, res) => {
   try {

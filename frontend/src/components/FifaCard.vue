@@ -12,7 +12,13 @@
           <div class="fifa-card-ovr">{{ player.overall }}</div>
           <div class="fifa-card-pos">{{ player.position }}</div>
         </div>
-        <div v-if="player.verified" class="verified-badge" title="Stats verified">
+        <div v-if="player.ballonDor" class="verified-badge ballon-dor-badge" title="Ballon d'Or">
+          <div class="ballon-dor-icon-wrap">
+            <img src="/ballon_dor.png" width="45" height="45" style="object-fit:contain;" />
+            <span class="ballon-dor-label">Ballon d'Or</span>
+          </div>
+        </div>
+        <div v-else-if="player.verified" class="verified-badge" title="Stats verified">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
           </svg>
@@ -114,6 +120,7 @@ function onMouseLeave() {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
 .fifa-card {
   position: relative;
   width: 250px;
@@ -179,6 +186,27 @@ function onMouseLeave() {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+}
+
+.ballon-dor-icon-wrap {
+  position: relative;
+  width: 45px;
+  height: 45px;
+}
+
+.ballon-dor-label {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Dancing Script', cursive;
+  font-style: italic;
+  font-size: .9rem;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.75);
+  white-space: nowrap;
+  pointer-events: none;
+  letter-spacing: 0.3px;
 }
 
 .fifa-card-ovr {
@@ -250,7 +278,7 @@ function onMouseLeave() {
   color: rgba(0,0,0,0.5);
   text-transform: uppercase;
   letter-spacing: 1px;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .fifa-card-divider {

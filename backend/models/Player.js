@@ -17,6 +17,7 @@ const playerSchema = new mongoose.Schema({
   },
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
   verified: { type: Boolean, default: false },
+  ballonDor: { type: Boolean, default: false },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Player', playerSchema);
