@@ -225,6 +225,7 @@ function onMouseLeave() {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  min-height: fit-content;
 }
 
 .fifa-card-club {
