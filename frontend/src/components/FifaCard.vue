@@ -342,18 +342,18 @@ function onMouseLeave() {
     height: 392px;
     clip-path: path('M 28 0 L 252 0 A 28 28 0 0 1 280 28 L 280 314 C 280 356 185 386 140 392 C 95 386 0 356 0 314 L 0 28 A 28 28 0 0 1 28 0 Z');
   }
-  .fifa-card-inner { padding: 14px 16px 85px; }
-  .fifa-card-top { margin-bottom: 4px; }
-  .fifa-card-ovr { font-size: 2.6rem; }
-  .fifa-card-pos { font-size: 0.9rem; margin-top: 6px; }
-  .fifa-card-photo-wrap { margin: -40px 0 2px; }
-  .fifa-card-photo { width: 135px; height: 135px; }
-  .fifa-card-photo-placeholder { width: 135px; height: 135px; font-size: 2.6rem; }
+  .fifa-card-inner { padding: 10px 16px 75px; }
+  .fifa-card-top { margin-bottom: 2px; }
+  .fifa-card-ovr { font-size: 2.2rem; }
+  .fifa-card-pos { font-size: 0.85rem; margin-top: 4px; }
+  .fifa-card-photo-wrap { margin: -30px 0 2px; }
+  .fifa-card-photo { width: 110px; height: 110px; }
+  .fifa-card-photo-placeholder { width: 110px; height: 110px; font-size: 2.2rem; }
   .fifa-card-name { font-size: 1rem; letter-spacing: 1.5px; margin-bottom: 2px; }
-  .fifa-card-club { font-size: 0.65rem; margin-bottom: 8px; }
+  .fifa-card-club { font-size: 0.65rem; margin-bottom: 4px; }
   .fifa-card-stat-val { font-size: 1rem; min-width: 24px; }
   .fifa-card-stat-label { font-size: 0.72rem; }
   .fifa-card-stats { gap: 3px 12px; margin-left: 15% }
-  .fifa-card-divider { margin-bottom: 8px; }
+  .fifa-card-divider { margin-bottom: 6px; }
 }
 </style>
