@@ -71,7 +71,7 @@ router.delete('/:id', auth, adminOnly, async (req, res) => {
   }
 });
 
-// PATCH /api/players/:id/profile — owner or admin: name + photo only
+// PATCH /api/players/:id/profile — owner or admin: name, photo, nationality, club, position
 router.patch('/:id/profile', auth, async (req, res) => {
   try {
     const player = await Player.findById(req.params.id);
@@ -84,10 +84,12 @@ router.patch('/:id/profile', auth, async (req, res) => {
       return res.status(403).json({ message: 'Not authorized to edit this player' });
     }
 
-    // Strip everything except name and photo
-    const { name, photo } = req.body;
+    const { name, photo, nationality, club, position } = req.body;
     if (name !== undefined) player.name = name;
     if (photo !== undefined) player.photo = photo;
+    if (nationality !== undefined) player.nationality = nationality;
+    if (club !== undefined) player.club = club;
+    if (position !== undefined) player.position = position;
 
     await player.save();
     await player.populate('owner', 'username email');

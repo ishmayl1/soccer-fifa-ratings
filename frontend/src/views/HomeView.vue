@@ -1,60 +1,41 @@
 <template>
-  <main class="max-w-7xl mx-auto px-4 sm:px-6">
-      <!-- Search -->
-      <div class="mb-8">
-        <SearchBar @search="onSearch" />
-      </div>
+  <main class="page-main">
+    <div class="mb-6">
+      <SearchBar @search="onSearch" />
+    </div>
 
-      <!-- Stats bar -->
-      <div v-if="!playerStore.loading" class="flex items-center justify-between mb-6">
-        <p class="text-white/40 text-sm">
-          {{ playerStore.players.length }} player{{ playerStore.players.length !== 1 ? 's' : '' }}
-          <span v-if="currentSearch">matching "<span class="text-yellow-400">{{ currentSearch }}</span>"</span>
-        </p>
-      </div>
+    <p v-if="!playerStore.loading" class="d-flex align-center justify-center text-muted text-sm mb-6">
+      {{ playerStore.players.length }} player{{ playerStore.players.length !== 1 ? 's' : '' }}
+      <span v-if="currentSearch"> matching "<span class="text-gold">{{ currentSearch }}</span>"</span>
+    </p>
 
-      <!-- Grid -->
-      <div
-        v-if="!playerStore.loading && playerStore.players.length > 0"
-        class="grid gap-4 md:gap-6 justify-items-center"
-        style="grid-template-columns: repeat(auto-fill, minmax(160px, 250px));"
-      >
-        <div
-          v-for="player in playerStore.players"
-          :key="player._id"
-          class="relative group"
-        >
-          <FifaCard :player="player">
-            <!-- Pencil icon for card owner -->
-            <button
-              v-if="isOwner(player)"
-              @click.stop="openProfileEdit(player)"
-              class="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-yellow-400 opacity-0 group-hover:opacity-100 transition-all hover:bg-black/70 hover:scale-110"
-              title="Edit your card"
-            >
-              <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-              </svg>
-            </button>
-          </FifaCard>
-        </div>
+    <div v-if="!playerStore.loading && playerStore.players.length > 0" class="card-grid">
+      <div v-for="player in playerStore.players" :key="player._id" class="card-wrap position-relative">
+        <FifaCard :player="player">
+          <button
+            v-if="isOwner(player)"
+            @click.stop="openProfileEdit(player)"
+            class="edit-btn"
+            title="Edit your card"
+          >
+            <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+            </svg>
+          </button>
+        </FifaCard>
       </div>
+    </div>
 
-      <!-- Loading -->
-      <div v-else-if="playerStore.loading" class="flex justify-center items-center py-20">
-        <div class="w-12 h-12 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
-      </div>
+    <div v-else-if="playerStore.loading" class="d-flex justify-center py-12">
+      <NSpin size="large" />
+    </div>
 
-      <!-- Empty -->
-      <div v-else class="text-center py-20">
-        <div class="text-6xl mb-4">⚽</div>
-        <p class="text-white/40 text-lg">
-          {{ currentSearch ? 'No players found' : 'No players yet. Ask an admin to add some!' }}
-        </p>
-      </div>
+    <div v-else class="text-center text-muted py-12">
+      <div style="font-size:4rem">⚽</div>
+      <p>{{ currentSearch ? 'No players found' : 'No players yet. Ask an admin to add some!' }}</p>
+    </div>
   </main>
 
-  <!-- Profile edit modal -->
   <ProfileEditModal
     :show="showProfileModal"
     :player="selectedPlayer"
@@ -65,6 +46,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { NSpin } from 'naive-ui'
 import SearchBar from '../components/SearchBar.vue'
 import FifaCard from '../components/FifaCard.vue'
 import ProfileEditModal from '../components/ProfileEditModal.vue'
@@ -99,3 +81,41 @@ function onProfileSaved() {
   // store already updated in place
 }
 </script>
+
+<style scoped>
+.page-main {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 250px));
+  gap: 1.5rem;
+  justify-content: center;
+  justify-items: center;
+}
+@media (max-width: 599px) {
+  .card-grid { grid-template-columns: min(80vw, 300px); }
+}
+.card-wrap:hover .edit-btn { opacity: 1; }
+.edit-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f5d577;
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.15s;
+  cursor: pointer;
+}
+.edit-btn:hover { transform: scale(1.1); background: rgba(0,0,0,0.75); }
+</style>

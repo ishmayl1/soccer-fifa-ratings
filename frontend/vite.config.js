@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import tailwindcss from '@tailwindcss/vite'
 import { readFileSync } from 'fs'
 import { resolve } from 'path'
 
@@ -10,7 +9,7 @@ export default defineConfig({
   define: {
     __APP_VERSION__: JSON.stringify(rootPkg.version),
   },
-  plugins: [vue(), tailwindcss()],
+  plugins: [vue()],
   server: {
     proxy: {
       '/api': 'http://localhost:3000',

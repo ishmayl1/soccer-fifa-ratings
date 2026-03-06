@@ -1,119 +1,68 @@
 <template>
-  <div class="login-bg min-h-screen flex items-center justify-center p-4">
-
-    <!-- Floating card decorations -->
-    <div class="absolute inset-0 overflow-hidden pointer-events-none">
-      <div class="absolute -top-10 -left-10 w-48 h-64 fifa-card gold opacity-10 rotate-[-15deg]"></div>
-      <div class="absolute -bottom-10 -right-10 w-48 h-64 fifa-card silver opacity-10 rotate-[15deg]"></div>
-      <div class="absolute top-1/4 right-8 w-32 h-44 fifa-card bronze opacity-10 rotate-[8deg]"></div>
+  <div class="login-bg login-page d-flex align-center justify-center min-h-screen overflow-hidden position-relative">
+    <!-- Background card decorations -->
+    <div class="position-absolute pointer-events-none" style="inset:0">
+      <div class="fifa-card gold deco-card" style="top:-40px;left:-40px;transform:rotate(-15deg);opacity:0.1"></div>
+      <div class="fifa-card silver deco-card" style="bottom:-40px;right:-40px;transform:rotate(15deg);opacity:0.1"></div>
     </div>
 
-    <div class="relative w-full max-w-md">
-
-      <!-- Logo -->
-      <div class="text-center mb-8">
-        <div class="text-6xl mb-3">⚽</div>
-        <h1 class="text-3xl font-black text-yellow-400 tracking-tight">
-          Cool Soccer
-        </h1>
-        <p class="text-white/40 text-sm mt-1">For Cool People</p>
+    <div class="login-container position-relative w-100">
+      <div class="login-logo text-center mb-8">
+        <div style="font-size:3.5rem">⚽</div>
+        <h1 class="login-title font-black text-gold">Cool Soccer</h1>
+        <p class="text-muted text-sm">For Cool People</p>
       </div>
 
-      <!-- Card -->
-      <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 shadow-2xl">
+      <NCard class="py-2 px-0">
+        <NTabs v-model:value="mode" type="bar" animated justify-content="space-evenly">
+          <NTabPane name="login" tab="Login" />
+          <NTabPane name="register" tab="Register" />
+        </NTabs>
 
-        <!-- Tab toggle -->
-        <div class="flex rounded-xl bg-white/5 p-1 mb-6">
-          <button
-            @click="mode = 'login'"
-            class="flex-1 py-2 rounded-lg text-sm font-semibold transition-all"
-            :class="mode === 'login' ? 'bg-yellow-400 text-black' : 'text-white/50 hover:text-white'"
-          >Login</button>
-          <button
-            @click="mode = 'register'"
-            class="flex-1 py-2 rounded-lg text-sm font-semibold transition-all"
-            :class="mode === 'register' ? 'bg-yellow-400 text-black' : 'text-white/50 hover:text-white'"
-          >Register</button>
-        </div>
-
-        <form @submit.prevent="submit" class="space-y-4">
-
-          <!-- Username (register only) -->
+        <form @submit.prevent="submit" class="d-flex flex-column gap-3 mt-5">
           <Transition name="slide-up">
-            <div v-if="mode === 'register'">
-              <label class="block text-sm font-medium text-white/70 mb-1">Username</label>
-              <input
-                v-model="form.username"
-                type="text"
-                required
-                autocomplete="username"
-                class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-yellow-400/60 transition-all"
-                placeholder="coolsoccer99"
-              />
-            </div>
+            <NFormItem v-if="mode === 'register'" label="Username" :show-feedback="false">
+              <NInput v-model:value="form.username" placeholder="coolsoccer99" size="large" />
+            </NFormItem>
           </Transition>
 
-          <!-- Email -->
-          <div>
-            <label class="block text-sm font-medium text-white/70 mb-1">Email</label>
-            <input
-              v-model="form.email"
-              type="email"
-              required
-              autocomplete="email"
-              class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-yellow-400/60 transition-all"
-              placeholder="you@example.com"
-            />
-          </div>
+          <NFormItem label="Email" :show-feedback="false">
+            <NInput v-model:value="form.email" type="text" placeholder="you@example.com" size="large" />
+          </NFormItem>
 
-          <!-- Password -->
-          <div>
-            <label class="block text-sm font-medium text-white/70 mb-1">Password</label>
-            <input
-              v-model="form.password"
-              type="password"
-              required
-              autocomplete="current-password"
-              class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-yellow-400/60 transition-all"
-              placeholder="••••••••"
-            />
-          </div>
+          <NFormItem label="Password" :show-feedback="false">
+            <NInput v-model:value="form.password" type="password" placeholder="••••••••" size="large" show-password-on="click" />
+          </NFormItem>
 
-          <!-- Admin secret (register only, optional) -->
           <Transition name="slide-up">
-            <div v-if="mode === 'register'">
-              <label class="block text-sm font-medium text-white/70 mb-1">
-                Admin Secret <span class="text-white/30 text-xs">(optional)</span>
-              </label>
-              <input
-                v-model="form.adminSecret"
-                type="password"
-                class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-yellow-400/60 transition-all"
-                placeholder="Leave blank for regular account"
-              />
-            </div>
+            <NFormItem v-if="mode === 'register'" label="Admin Secret" :show-feedback="false">
+              <NInput v-model:value="form.adminSecret" type="password" placeholder="Leave blank for regular account" size="large" show-password-on="click" />
+            </NFormItem>
           </Transition>
 
-          <!-- Error -->
-          <div v-if="error" class="bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-red-400 text-sm">
+          <NAlert v-if="error" type="error" :bordered="false" class="mt-1">
             {{ error }}
-          </div>
+          </NAlert>
 
-          <button
-            type="submit"
-            :disabled="loading"
-            class="w-full py-3 rounded-xl bg-yellow-400 text-black font-bold text-base hover:bg-yellow-300 transition-all disabled:opacity-50 mt-2"
+          <NButton
+            attr-type="submit"
+            type="primary"
+            size="large"
+            :loading="loading"
+            block
+            style="margin-top: 8px; font-weight: 700; color: #000;"
           >
-            {{ loading ? '...' : (mode === 'login' ? 'Login' : 'Create Account') }}
-          </button>
+            {{ mode === 'login' ? 'Login' : 'Create Account' }}
+          </NButton>
         </form>
-      </div>
+      </NCard>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, watch } from 'vue'
+import { NCard, NTabs, NTabPane, NFormItem, NInput, NButton, NAlert } from 'naive-ui'
 import { useAuthStore } from '../stores/auth'
 import { useRouter } from 'vue-router'
 
@@ -123,7 +72,6 @@ const router = useRouter()
 const mode = ref('login')
 const loading = ref(false)
 const error = ref('')
-
 const form = ref({ username: '', email: '', password: '', adminSecret: '' })
 
 watch(mode, () => { error.value = '' })
@@ -145,3 +93,14 @@ async function submit() {
   }
 }
 </script>
+
+<style scoped>
+.login-page { padding: 1.5rem; }
+.deco-card { position: absolute; width: 192px; height: 268px; }
+.login-container { max-width: 420px; }
+.login-title {
+  font-size: 2rem;
+  letter-spacing: -0.5px;
+  margin: 8px 0 4px;
+}
+</style>

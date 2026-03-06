@@ -1,120 +1,78 @@
 <template>
-  <Teleport to="body">
-    <Transition name="fade">
-      <div v-if="show" class="modal-overlay" @click.self="$emit('close')">
-        <Transition name="slide-up">
-          <div v-if="show" class="modal-box" style="max-width: 800px;">
-            <button
-              @click="$emit('close')"
-              class="absolute top-4 right-4 text-white/40 hover:text-white transition-colors text-xl z-10"
-            >✕</button>
+  <NModal
+    :show="show"
+    preset="card"
+    :title="editingPlayer ? 'Edit Player' : 'Add New Player'"
+    style="max-width: 800px; width: 95vw;"
+    @update:show="val => !val && $emit('close')"
+  >
+    <div class="modal-layout d-flex gap-8 align-start">
+      <!-- Form -->
+      <form @submit.prevent="submit" class="form-col flex-1 d-flex flex-column gap-4">
+        <div class="two-col d-grid gap-3">
+          <NFormItem label="Name *" :show-feedback="false">
+            <NInput v-model:value="form.name" placeholder="Player name" required />
+          </NFormItem>
+          <NFormItem label="Position *" :show-feedback="false">
+            <NSelect v-model:value="form.position" :options="positionOptions" placeholder="Select..." />
+          </NFormItem>
+        </div>
 
-            <h2 class="text-xl font-bold text-yellow-400 mb-6">
-              {{ editingPlayer ? 'Edit Player' : 'Add New Player' }}
-            </h2>
+        <div class="two-col d-grid gap-3">
+          <NFormItem label="Nationality" :show-feedback="false">
+            <NInput v-model:value="form.nationality" placeholder="Country" />
+          </NFormItem>
+          <NFormItem label="Club" :show-feedback="false">
+            <NInput v-model:value="form.club" placeholder="Club name" />
+          </NFormItem>
+        </div>
 
-            <div class="flex flex-col lg:flex-row gap-6">
-              <!-- Form -->
-              <form @submit.prevent="submit" class="flex-1 space-y-4">
-                <!-- Name + Position row -->
-                <div class="grid grid-cols-2 gap-3">
-                  <div>
-                    <label class="block text-xs font-medium text-white/60 mb-1">Name *</label>
-                    <input v-model="form.name" required type="text"
-                      class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-yellow-400/50 transition-colors" />
-                  </div>
-                  <div>
-                    <label class="block text-xs font-medium text-white/60 mb-1">Position *</label>
-                    <select v-model="form.position" required
-                      class="w-full bg-[#1a1a35] border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-yellow-400/50 transition-colors">
-                      <option value="">Select...</option>
-                      <option v-for="pos in positions" :key="pos" :value="pos">{{ pos }}</option>
-                    </select>
-                  </div>
-                </div>
+        <NFormItem :show-feedback="false">
+          <template #label>
+            Overall: <span class="text-gold font-bold">{{ form.overall }}</span>
+          </template>
+          <NSlider v-model:value="form.overall" :min="1" :max="99" style="width:100%" />
+        </NFormItem>
 
-                <!-- Nationality + Club -->
-                <div class="grid grid-cols-2 gap-3">
-                  <div>
-                    <label class="block text-xs font-medium text-white/60 mb-1">Nationality</label>
-                    <input v-model="form.nationality" type="text"
-                      class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-yellow-400/50 transition-colors" />
-                  </div>
-                  <div>
-                    <label class="block text-xs font-medium text-white/60 mb-1">Club</label>
-                    <input v-model="form.club" type="text"
-                      class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-yellow-400/50 transition-colors" />
-                  </div>
-                </div>
+        <div class="two-col d-grid gap-3">
+          <NFormItem v-for="stat in statKeys" :key="stat" :show-feedback="false">
+            <template #label>
+              {{ stat.toUpperCase() }}: <span class="text-gold">{{ form.stats[stat] }}</span>
+            </template>
+            <NSlider v-model:value="form.stats[stat]" :min="1" :max="99" style="width:100%" />
+          </NFormItem>
+        </div>
 
-                <!-- Overall -->
-                <div>
-                  <label class="block text-xs font-medium text-white/60 mb-1">
-                    Overall Rating: <span class="text-yellow-400 font-bold">{{ form.overall }}</span>
-                  </label>
-                  <input v-model.number="form.overall" type="range" min="1" max="99"
-                    class="w-full accent-yellow-400" />
-                </div>
+        <NFormItem label="Photo" :show-feedback="false">
+          <input type="file" accept="image/*" @change="onFile" class="text-dim text-sm cursor-pointer w-full" />
+        </NFormItem>
 
-                <!-- Stats grid -->
-                <div class="grid grid-cols-2 gap-x-4 gap-y-2">
-                  <div v-for="stat in statKeys" :key="stat">
-                    <label class="block text-xs font-medium text-white/60 mb-0.5">
-                      {{ stat.toUpperCase() }}: <span class="text-yellow-400">{{ form.stats[stat] }}</span>
-                    </label>
-                    <input v-model.number="form.stats[stat]" type="range" min="1" max="99"
-                      class="w-full accent-yellow-400" />
-                  </div>
-                </div>
+        <NFormItem label="Assign Owner (optional)" :show-feedback="false">
+          <NSelect v-model:value="form.owner" :options="userOptions" placeholder="None" clearable />
+        </NFormItem>
 
-                <!-- Photo upload -->
-                <div>
-                  <label class="block text-xs font-medium text-white/60 mb-1">Photo</label>
-                  <input type="file" accept="image/*" @change="onFile"
-                    class="w-full text-sm text-white/60 file:mr-2 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-medium file:bg-yellow-400/10 file:text-yellow-400 hover:file:bg-yellow-400/20 transition-all cursor-pointer" />
-                </div>
+        <NAlert v-if="error" type="error" :bordered="false">{{ error }}</NAlert>
 
-                <!-- Owner assignment -->
-                <div>
-                  <label class="block text-xs font-medium text-white/60 mb-1">Assign Owner (optional)</label>
-                  <select v-model="form.owner"
-                    class="w-full bg-[#1a1a35] border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-yellow-400/50 transition-colors">
-                    <option value="">None</option>
-                    <option v-for="u in users" :key="u._id" :value="u._id">
-                      {{ u.username }} ({{ u.email }})
-                    </option>
-                  </select>
-                </div>
+        <div class="d-flex gap-3 mt-1">
+          <NButton class="flex-1" @click="$emit('close')">Cancel</NButton>
+          <NButton class="flex-1" style="color:#000;font-weight:700" type="primary" attr-type="submit" :loading="saving">
+            {{ editingPlayer ? 'Update' : 'Create' }}
+          </NButton>
+        </div>
+      </form>
 
-                <div v-if="error" class="text-red-400 text-sm">{{ error }}</div>
-
-                <div class="flex gap-3 pt-1">
-                  <button type="button" @click="$emit('close')"
-                    class="flex-1 py-2 rounded-lg border border-white/10 text-white/60 hover:text-white hover:border-white/30 transition-all text-sm">
-                    Cancel
-                  </button>
-                  <button type="submit" :disabled="saving"
-                    class="flex-1 py-2 rounded-lg bg-yellow-400 text-black font-bold hover:bg-yellow-300 transition-all text-sm disabled:opacity-50">
-                    {{ saving ? 'Saving...' : (editingPlayer ? 'Update' : 'Create') }}
-                  </button>
-                </div>
-              </form>
-
-              <!-- Live preview -->
-              <div class="flex flex-col items-center gap-3 lg:min-w-[180px]">
-                <p class="text-xs text-white/40 font-medium uppercase tracking-wider">Live Preview</p>
-                <FifaCard :player="FifaCardPreviewPlayer" />
-              </div>
-            </div>
-          </div>
-        </Transition>
+      <!-- Live preview -->
+      <div class="preview-col d-flex flex-column align-center gap-2 flex-shrink-0">
+        <p class="text-xs text-muted text-uppercase tracking-wide">Live Preview</p>
+        <FifaCard :player="FifaCardPreviewPlayer" />
       </div>
-    </Transition>
-  </Teleport>
+    </div>
+  </NModal>
 </template>
 
 <script setup>
 import { ref, watch, computed, onMounted } from 'vue'
+import { NModal, NFormItem, NInput, NSelect, NSlider, NButton, NAlert } from 'naive-ui'
 import FifaCard from './FifaCard.vue'
 import { usePlayerStore } from '../stores/players'
 
@@ -127,6 +85,7 @@ const emit = defineEmits(['close', 'saved'])
 const playerStore = usePlayerStore()
 
 const positions = ['GK', 'CB', 'LB', 'RB', 'CDM', 'CM', 'CAM', 'LM', 'RM', 'LW', 'RW', 'CF', 'ST']
+const positionOptions = positions.map(p => ({ label: p, value: p }))
 const statKeys = ['pac', 'sho', 'pas', 'dri', 'def', 'phy']
 
 const defaultForm = () => ({
@@ -145,6 +104,9 @@ const photoPreviewUrl = ref('')
 const saving = ref(false)
 const error = ref('')
 const users = ref([])
+const userOptions = computed(() =>
+  users.value.map(u => ({ label: `${u.username} (${u.email})`, value: u._id }))
+)
 
 onMounted(async () => {
   try {
@@ -182,7 +144,7 @@ function onFile(e) {
 const FifaCardPreviewPlayer = computed(() => {
   const p = { ...form.value, stats: { ...form.value.stats } }
   if (photoFile.value) {
-    p.photo = photoPreviewUrl.value  // blob URL — FifaCard handles it directly
+    p.photo = photoPreviewUrl.value
   } else if (props.editingPlayer?.photo) {
     p.photo = props.editingPlayer.photo
   } else {
@@ -227,3 +189,15 @@ async function submit() {
   }
 }
 </script>
+
+<style scoped>
+/* Responsive overrides — kept as classes so media queries can target them */
+.modal-layout { align-items: flex-start; }
+.form-col { min-width: 0; }
+.two-col { grid-template-columns: 1fr 1fr; }
+@media (max-width: 560px) {
+  .modal-layout { flex-direction: column; align-items: stretch; }
+  .preview-col { order: -1; align-items: center; }
+  .two-col { grid-template-columns: 1fr; }
+}
+</style>
