@@ -82,10 +82,11 @@ async function submit() {
   try {
     if (mode.value === 'login') {
       await auth.login(form.value.email, form.value.password)
+      router.push('/')
     } else {
       await auth.register(form.value.username, form.value.email, form.value.password, form.value.adminSecret || null)
+      router.push(auth.isAdmin ? '/' : '/onboarding')
     }
-    router.push('/')
   } catch (err) {
     error.value = err.response?.data?.message || 'Something went wrong'
   } finally {

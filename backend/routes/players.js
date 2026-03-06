@@ -29,6 +29,30 @@ router.get('/:id', auth, async (req, res) => {
   }
 });
 
+// POST /api/players/self — any authenticated user creates their own card (no stats)
+router.post('/self', auth, async (req, res) => {
+  try {
+    const existing = await Player.findOne({ owner: req.user.id });
+    if (existing) return res.status(409).json({ message: 'You already have a player card' });
+
+    const { name, position, nationality, club, photo } = req.body;
+    const player = await Player.create({
+      name, position,
+      nationality: nationality || '',
+      club: club || 'Cool Soccer For Cool People',
+      photo: photo || '',
+      overall: 50,
+      stats: { pac: 50, sho: 50, pas: 50, dri: 50, def: 50, phy: 50 },
+      owner: req.user.id,
+      verified: false,
+    });
+    await player.populate('owner', 'username email');
+    res.status(201).json(player);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
 // POST /api/players — admin only
 router.post('/', auth, adminOnly, async (req, res) => {
   try {
@@ -47,10 +71,10 @@ router.post('/', auth, adminOnly, async (req, res) => {
 // PUT /api/players/:id — admin only (full update)
 router.put('/:id', auth, adminOnly, async (req, res) => {
   try {
-    const { name, position, nationality, club, photo, overall, stats, owner } = req.body;
+    const { name, position, nationality, club, photo, overall, stats, owner, verified } = req.body;
     const player = await Player.findByIdAndUpdate(
       req.params.id,
-      { name, position, nationality, club, photo, overall, stats, owner: owner || null },
+      { name, position, nationality, club, photo, overall, stats, owner: owner || null, verified: !!verified },
       { new: true, runValidators: true }
     ).populate('owner', 'username email');
     if (!player) return res.status(404).json({ message: 'Player not found' });

@@ -23,6 +23,12 @@ export const usePlayerStore = defineStore('players', {
       }
     },
 
+    async createSelf(payload) {
+      const { data } = await api.post('/players/self', payload)
+      this.players.unshift(data)
+      return data
+    },
+
     async createPlayer(payload) {
       const { data } = await api.post('/players', payload)
       this.players.unshift(data)

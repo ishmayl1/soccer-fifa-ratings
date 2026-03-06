@@ -37,11 +37,20 @@
         </div>
 
         <NFormItem label="Photo" :show-feedback="false">
-          <input type="file" accept="image/*" @change="onFile" class="text-dim text-sm cursor-pointer w-full" />
+          <input type="file" accept="image/*,.svg" @change="onFile" class="text-dim text-sm cursor-pointer w-full" />
         </NFormItem>
 
         <NFormItem label="Assign Owner (optional)" :show-feedback="false">
           <NSelect v-model:value="form.owner" :options="userOptions" placeholder="None" clearable />
+        </NFormItem>
+
+        <NFormItem :show-feedback="false">
+          <div class="d-flex align-center gap-3">
+            <NSwitch v-model:value="form.verified" />
+            <span class="text-sm" :style="form.verified ? 'color:#f5d577' : 'color:rgba(255,255,255,0.4)'">
+              Stats verified
+            </span>
+          </div>
         </NFormItem>
 
         <NAlert v-if="error" type="error" :bordered="false">{{ error }}</NAlert>
@@ -65,7 +74,7 @@
 
 <script setup>
 import { ref, watch, computed, onMounted } from 'vue'
-import { NModal, NFormItem, NInput, NSelect, NSlider, NButton, NAlert } from 'naive-ui'
+import { NModal, NFormItem, NInput, NSelect, NSlider, NButton, NAlert, NSwitch } from 'naive-ui'
 import FifaCard from './FifaCard.vue'
 import { usePlayerStore } from '../stores/players'
 import { useBreakpoints } from '../composables/useBreakpoints'
@@ -91,6 +100,7 @@ const defaultForm = () => ({
   overall: 75,
   stats: { pac: 75, sho: 75, pas: 75, dri: 75, def: 75, phy: 75 },
   owner: '',
+  verified: false,
 })
 
 const form = ref(defaultForm())
@@ -130,6 +140,7 @@ watch(() => props.editingPlayer, (p) => {
       overall: p.overall,
       stats: { ...p.stats },
       owner: p.owner?._id || '',
+      verified: p.verified || false,
     }
     photoPreviewUrl.value = p.photo ? `/uploads/${p.photo}` : ''
   } else {
@@ -177,6 +188,7 @@ async function submit() {
       stats: { ...form.value.stats },
       photo,
       owner: form.value.owner || null,
+      verified: form.value.verified,
     }
 
     let result

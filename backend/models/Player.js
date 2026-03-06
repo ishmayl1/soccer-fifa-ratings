@@ -16,6 +16,7 @@ const playerSchema = new mongoose.Schema({
     phy: { type: Number, min: 1, max: 99, default: 50 },
   },
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+  verified: { type: Boolean, default: false },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Player', playerSchema);

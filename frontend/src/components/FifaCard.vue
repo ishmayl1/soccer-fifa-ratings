@@ -12,6 +12,11 @@
           <div class="fifa-card-ovr">{{ player.overall }}</div>
           <div class="fifa-card-pos">{{ player.position }}</div>
         </div>
+        <div v-if="player.verified" class="verified-badge" title="Stats verified">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
       </div>
 
       <div class="fifa-card-photo-wrap">
@@ -166,6 +171,20 @@ function onMouseLeave() {
   align-items: flex-start;
   gap: 8px;
   margin-bottom: 4px;
+}
+
+.verified-badge {
+  margin-left: auto;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1.5px solid rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.9);
+  flex-shrink: 0;
 }
 
 .fifa-card-ovr {
